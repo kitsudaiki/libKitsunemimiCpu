@@ -3,6 +3,7 @@
 
 #include <libKitsunemimiCpu/cpu.h>
 #include <libKitsunemimiCpu/rapl.h>
+#include <libKitsunemimiCpu/memory.h>
 #include <libKitsunemimiCommon/logger.h>
 #include <libKitsunemimiCommon/threading/thread.h>
 
@@ -46,7 +47,7 @@ int main()
         sleep(1);
     }*/
 
-    Rapl rapl(0);
+    /*Rapl rapl(0);
     Kitsunemimi::initConsoleLogger(true);
     std::cout<<"init: "<<rapl.initRapl()<<std::endl;
 
@@ -59,7 +60,11 @@ int main()
         RaplDiff diff = rapl.calculateDiff();
         std::cout<<diff.toString()<<std::endl;
         sleep(1);
-    }
+    }*/
+
+    std::cout<<"total: "<<Kitsunemimi::Cpu::getTotalMemory()<<std::endl;
+    std::cout<<"free: "<<Kitsunemimi::Cpu::getFreeMemory()<<std::endl;
+    std::cout<<"page-size: "<<Kitsunemimi::Cpu::getPageSize()<<std::endl;
 
     return 0;
 }
