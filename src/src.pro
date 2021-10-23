@@ -14,8 +14,10 @@ INCLUDEPATH += $$PWD \
                $$PWD/../include
 
 HEADERS += \
-    ../include/libKitsunemimiCpu/cpu.h
+    ../include/libKitsunemimiCpu/cpu.h \
+    ../include/libKitsunemimiCpu/rapl.h
 
 SOURCES += \
-    cpu.cpp
+    cpu.cpp \
+    rapl.cpp
 

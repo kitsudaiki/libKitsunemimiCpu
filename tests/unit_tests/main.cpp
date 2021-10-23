@@ -2,11 +2,13 @@
 #include <unistd.h>
 
 #include <libKitsunemimiCpu/cpu.h>
+#include <libKitsunemimiCpu/rapl.h>
+#include <libKitsunemimiCommon/logger.h>
 #include <libKitsunemimiCommon/threading/thread.h>
 
 int main()
 {
-    std::cout<<"threads: "<<Kitsunemimi::Cpu::getNumberOfCpuThreads()<<std::endl;
+   /* std::cout<<"threads: "<<Kitsunemimi::Cpu::getNumberOfCpuThreads()<<std::endl;
     std::cout<<"sockets: "<<Kitsunemimi::Cpu::getNumberOfCpuSockets()<<std::endl;
     std::cout<<"socket of thead 1: "<<Kitsunemimi::Cpu::getCpuSocketId(1)<<std::endl;
     std::cout<<"sibling of thread 1: "<<Kitsunemimi::Cpu::getCpuSiblingId(1)<<std::endl;
@@ -41,6 +43,21 @@ int main()
         std::cout<<i<<" ------------------"<<std::endl;
         std::cout<<"cur of thread 0: "<<Kitsunemimi::Cpu::getCurrentMinimumSpeed(0)<<std::endl;
 
+        sleep(1);
+    }*/
+
+    Rapl rapl(0);
+    Kitsunemimi::initConsoleLogger(true);
+    std::cout<<"init: "<<rapl.initRapl()<<std::endl;
+
+    sleep(1);
+    std::cout<<"info: "<<rapl.getInfo().toString()<<std::endl;
+
+    for(int i = 0; i < 50; i++)
+    {
+        std::cout<<i<<" ------------------"<<std::endl;
+        RaplDiff diff = rapl.calculateDiff();
+        std::cout<<diff.toString()<<std::endl;
         sleep(1);
     }
 
