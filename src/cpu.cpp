@@ -364,5 +364,5 @@ resetSpeed(const int32_t threadId)
     return true;
 }
 
-}
-}
+} // namespace Cpu
+} // namespace Kitsunemimi

@@ -6,8 +6,8 @@
  *  @copyright  MIT License
  */
 
-#ifndef CPU_H
-#define CPU_H
+#ifndef KITSUNEMIMI_CPU_CPU_H
+#define KITSUNEMIMI_CPU_CPU_H
 
 #include <stdint.h>
 #include <string>
@@ -36,7 +36,7 @@ bool setMinimumSpeed(const int32_t threadId, int64_t newSpeed);
 bool setMaximumSpeed(const int32_t threadId, int64_t newSpeed);
 bool resetSpeed(const int32_t threadId);
 
-}
-}
+} // namespace Cpu
+} // namespace Kitsunemimi
 
-#endif // CPU_H
+#endif // KITSUNEMIMI_CPU_CPU_H

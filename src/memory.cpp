@@ -44,5 +44,5 @@ getPageSize()
     return sysconf(_SC_PAGE_SIZE);
 }
 
-}
-}
+} // namespace Cpu
+} // namespace Kitsunemimi

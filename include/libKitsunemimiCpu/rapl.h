@@ -12,8 +12,8 @@
 #include <cmath>
 #include <chrono>
 
-#ifndef RAPL_H
-#define RAPL_H
+#ifndef KITSUNEMIMI_CPU_RAPL_H
+#define KITSUNEMIMI_CPU_RAPL_H
 
 namespace Kitsunemimi
 {
@@ -107,7 +107,7 @@ private:
     uint64_t readMSR(const int32_t offset);
 };
 
-}
-}
+} // namespace Cpu
+} // namespace Kitsunemimi
 
-#endif /* RAPL_H */
+#endif // KITSUNEMIMI_CPU_RAPL_H

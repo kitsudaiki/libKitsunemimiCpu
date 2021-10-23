@@ -6,8 +6,8 @@
  *  @copyright  MIT License
  */
 
-#ifndef MEMORY_H
-#define MEMORY_H
+#ifndef KITSUNEMIMI_CPU_MEMORY_H
+#define KITSUNEMIMI_CPU_MEMORY_H
 
 #include <unistd.h>
 #include <stdint.h>
@@ -21,7 +21,7 @@ uint64_t getTotalMemory();
 uint64_t getFreeMemory();
 uint64_t getPageSize();
 
-}
-}
+} // namespace Cpu
+} // namespace Kitsunemimi
 
-#endif // MEMORY_H
+#endif // KITSUNEMIMI_CPU_MEMORY_H

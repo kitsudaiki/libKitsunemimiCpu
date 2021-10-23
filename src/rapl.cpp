@@ -244,5 +244,5 @@ Rapl::getInfo() const
     return m_info;
 }
 
-}
-}
+} // namespace Cpu
+} // namespace Kitsunemimi
