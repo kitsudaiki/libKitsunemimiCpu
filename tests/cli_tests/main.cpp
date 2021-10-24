@@ -33,27 +33,47 @@ int main()
     for(int i = 0; i < 5; i++)
     {
         std::cout<<i<<" ------------------"<<std::endl;
-        std::cout<<"cur of thread 0: "<<Kitsunemimi::Cpu::getCurrentMinimumSpeed(0)<<std::endl;
+        std::cout<<"cur of thread 0: "<<Kitsunemimi::Cpu::getCurrentSpeed(0)<<std::endl;
 
         sleep(1);
     }
 
-    std::cout<<"set speed to max: "<<Kitsunemimi::Cpu::setMinimumSpeed(0, 1000000000000)<<std::endl;
-
-    for(int i = 0; i < 5; i++)
+    std::cout<<"#######################################################################"<<std::endl;
+    for(int i = 0; i < 4; i++) {
+        std::cout<<"set speed Min-speed to max: "<<Kitsunemimi::Cpu::setMinimumSpeed(i, 1000000000000)<<std::endl;
+    }
+    for(int i = 0; i < 15; i++)
     {
         std::cout<<i<<" ------------------"<<std::endl;
-        std::cout<<"cur of thread 0: "<<Kitsunemimi::Cpu::getCurrentMinimumSpeed(0)<<std::endl;
+        std::cout<<"cur of thread 0: "<<Kitsunemimi::Cpu::getCurrentSpeed(0)<<std::endl;
+        sleep(1);
+    }
+    std::cout<<"#######################################################################"<<std::endl;
+
+    for(int i = 0; i < 4; i++) {
+        Kitsunemimi::Cpu::resetSpeed(i);
+        std::cout<<"set speed to min: "<<Kitsunemimi::Cpu::setMaximumSpeed(i, 400000)<<std::endl;
+    }
+
+    for(int i = 0; i < 15; i++)
+    {
+        std::cout<<i<<" ------------------"<<std::endl;
+        std::cout<<"cur of thread 0: "<<Kitsunemimi::Cpu::getCurrentSpeed(0)<<std::endl;
+        std::cout<<"min of thread 0: "<<Kitsunemimi::Cpu::getCurrentMinimumSpeed(0)<<std::endl;
+        std::cout<<"max of thread 0: "<<Kitsunemimi::Cpu::getCurrentMaximumSpeed(0)<<std::endl;
 
         sleep(1);
     }
+    std::cout<<"#######################################################################"<<std::endl;
 
-    Kitsunemimi::Cpu::resetSpeed(0);
+    for(int i = 0; i < 4; i++) {
+        Kitsunemimi::Cpu::resetSpeed(i);
+    }
 
     for(int i = 0; i < 5; i++)
     {
         std::cout<<i<<" ------------------"<<std::endl;
-        std::cout<<"cur of thread 0: "<<Kitsunemimi::Cpu::getCurrentMinimumSpeed(0)<<std::endl;
+        std::cout<<"cur of thread 0: "<<Kitsunemimi::Cpu::getCurrentSpeed(0)<<std::endl;
 
         sleep(1);
     }
