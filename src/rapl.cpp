@@ -7,7 +7,6 @@
  */
 
 #include <libKitsunemimiCpu/rapl.h>
-#include <libKitsunemimiCommon/logger.h>
 
 typedef std::chrono::milliseconds chronoMilliSec;
 typedef std::chrono::microseconds chronoMicroSec;
@@ -66,8 +65,7 @@ namespace Cpu
 #define SANDYBRIDGE_E                  0x206D0
 
 /**
- * @brief Rapl::Rapl
- * @param threadId
+ * @brief constructor
  */
 Rapl::Rapl(const int32_t threadId)
 {
@@ -77,32 +75,38 @@ Rapl::Rapl(const int32_t threadId)
 /**
  * @brief initalize rapl-class by open and reading msr-file
  *
+ * @param errorMessage reference for error-return
+ *
  * @return false, if already initialized or can not open msr-file, else true
  */
 bool
 Rapl::initRapl()
 {
     // check if already initialized
-    if(m_isInit) {
+    if(m_isInit)
+    {
+        ErrorContainer error;
+        error.errorMessage = "this rapl-class was already successfully initialized";
+        error.possibleSolution = "nothing to do";
+        LOG_ERROR(error);
         return false;
     }
 
     // try to open msr-file
-    const bool ret = openMSR();
-    if(ret == false) {
+    if(openMSR() == false) {
         return false;
     }
 
     // check if cpu supports pp1-value
     m_info.supportPP1 = checkPP1();
 
-    // Read MSR_RAPL_POWER_UNIT Register
+    // read MSR_RAPL_POWER_UNIT Register
     uint64_t raw_value = readMSR(MSR_RAPL_POWER_UNIT);
     m_info.power_units = pow(0.5, (double) (raw_value & 0xf));
     m_info.energy_units = pow(0.5, (double) ((raw_value >> 8) & 0x1f));
     m_info.time_units = pow(0.5,	(double) ((raw_value >> 16) & 0xf));
 
-    // Read MSR_PKG_POWER_INFO Register
+    // read MSR_PKG_POWER_INFO Register
     raw_value = readMSR(MSR_PKG_POWER_INFO);
     m_info.thermal_spec_power = m_info.power_units * ((double)(raw_value & 0x7fff));
     m_info.minimum_power = m_info.power_units * ((double)((raw_value >> 16) & 0x7fff));
@@ -145,6 +149,8 @@ Rapl::checkPP1()
 /**
  * @brief open msr-file for the specific thread
  *
+ * @param errorMessage reference for error-return
+ *
  * @return false, if file doesn't exist or can not be opened, else true
  */
 bool
@@ -154,16 +160,15 @@ Rapl::openMSR()
     m_fd = open(path.c_str(), O_RDONLY);
     if(m_fd <= 0)
     {
-        if(errno == EIO)
-        {
-            LOG_ERROR("CPU doesn't support MSRs");
-            return false;
-        }
-        else
-        {
-            LOG_ERROR("Failed to open path:" + path);
-            return false;
-        }
+        ErrorContainer error;
+        error.errorMessage = "Failed to open path:" + path;
+        error.possibleSolution = "1. Maybe the msr-kernel-module still have to be loaded with: "
+                                 "'modporobe msr' or 'modprobe intel_rapl_msr'\n"
+                                 ""
+                                 "2. Check if you have read-permissions to the path: "
+                                 "'" + path + "'";
+        LOG_ERROR(error);
+        return false;
     }
 
     return true;
@@ -182,7 +187,10 @@ Rapl::readMSR(const int32_t offset)
     uint64_t data;
     if(pread(m_fd, &data, sizeof(data), offset) != sizeof(data))
     {
-        LOG_ERROR("can not read MSR");
+        ErrorContainer error;
+        error.errorMessage = "can not read MSR of cpu even the msr-file is open";
+        error.possibleSolution = "(no solution known)";
+        LOG_ERROR(error);
         return 0;
     }
 
