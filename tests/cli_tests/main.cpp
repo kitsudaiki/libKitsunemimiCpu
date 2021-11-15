@@ -11,6 +11,8 @@ int main()
 {
     Kitsunemimi::initConsoleLogger(true);
 
+    std::cout<<"hyperthreading active: "<<Kitsunemimi::Cpu::isHyperThreadingEnabled()<<std::endl;
+
     //==============================================================================================
 
     std::cout<<"=============================MEMORY============================="<<std::endl;

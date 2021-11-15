@@ -103,6 +103,19 @@ getNumberOfCpuSockets()
 }
 
 /**
+ * @brief check if hyperthreading is enabled
+ *
+ * @return true, if hyperthreading is enabled on the system, else false
+ */
+bool
+isHyperThreadingEnabled()
+{
+    const std::string active = getInfo("/sys/devices/system/cpu/smt/active");
+    return active == "1";
+}
+
+
+/**
  * @brief check to which cpu-socket a specific thread belongs to
  *
  * @param threadId id of the thread to check
