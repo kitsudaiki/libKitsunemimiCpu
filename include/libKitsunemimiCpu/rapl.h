@@ -38,15 +38,15 @@ struct RaplDiff
     const std::string toString()
     {
         std::string content = "";
-        content += "pkgDiff: " + std::to_string(pkgDiff) + " J\n";
-        content += "pp0Diff: " + std::to_string(pp0Diff) + " J\n";
-        content += "pp1Diff: " + std::to_string(pp1Diff) + " J\n";
-        content += "dramDiff: " + std::to_string(dramDiff) + " J\n";
+        content += "pkgDiff: " + std::to_string(pkgDiff) + " Ws\n";
+        content += "pp0Diff: " + std::to_string(pp0Diff) + " Ws\n";
+        content += "pp1Diff: " + std::to_string(pp1Diff) + " Ws\n";
+        content += "dramDiff: " + std::to_string(dramDiff) + " Ws\n";
         content +=  "---\n";
-        content += "pkgAvg: " + std::to_string(pkgAvg) + " J/s\n";
-        content += "pp0Avg: " + std::to_string(pp0Avg) + " J/s\n";
-        content += "pp1Avg: " + std::to_string(pp1Avg) + " J/s\n";
-        content += "dramAvg: " + std::to_string(dramAvg) + " J/s\n";
+        content += "pkgAvg: " + std::to_string(pkgAvg) + " W\n";
+        content += "pp0Avg: " + std::to_string(pp0Avg) + " W\n";
+        content += "pp1Avg: " + std::to_string(pp1Avg) + " W\n";
+        content += "dramAvg: " + std::to_string(dramAvg) + " W\n";
         return content;
     }
 };
