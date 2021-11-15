@@ -23,7 +23,11 @@ int32_t getNumberOfCpuThreads();
 int32_t getNumberOfCpuSockets();
 int32_t getCpuSocketId(const int32_t threadId);
 int32_t getCpuSiblingId(const int32_t threadId);
-bool isHyperThreadingEnabled();
+
+// hyperthreading
+bool isHyperthreadingEnabled();
+bool isHyperthreadingSupported();
+bool changeHyperthreadingState(const bool newState);
 
 // speed
 int64_t getMinimumSpeed(const int32_t threadId);

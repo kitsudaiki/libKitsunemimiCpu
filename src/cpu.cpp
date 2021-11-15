@@ -45,6 +45,56 @@ getInfo(const std::string &path)
 }
 
 /**
+ * @brief write value into file
+ *
+ * @param filePath absolute file-path
+ * @param value value to write
+ *
+ * @return false, if no permission to update files, else true
+ */
+bool
+writeToFile(const std::string &filePath,
+            const std::string &value)
+{
+    // open file
+    std::ofstream outputFile;
+    outputFile.open(filePath, std::ios_base::in);
+    if(outputFile.is_open() == false) {
+        return false;
+    }
+
+    // update file
+    outputFile << value;
+    outputFile.flush();
+    outputFile.close();
+
+    return true;
+}
+
+/**
+ * @brief write new value into a cpu-freq-file
+ *
+ * @param value new value to write into the file
+ * @param threadId id of the thread to change
+ * @param fileName target file-name to update
+ *
+ * @return false, if no permission to update files, else true
+ */
+bool
+writeToFile(const int64_t value,
+            const int32_t threadId,
+            const std::string &fileName)
+{
+    // build target-path
+    const std::string filePath = "/sys/devices/system/cpu/cpu"
+                                 + std::to_string(threadId)
+                                 + "/cpufreq/"
+                                 + fileName;
+
+    return writeToFile(filePath, std::to_string(value));
+}
+
+/**
  * @brief get total number of cpu-threads of all cpu-sockets of the system
  *
  * @return -1 if target-file not found or broken, else number of cpu-threads
@@ -103,17 +153,71 @@ getNumberOfCpuSockets()
 }
 
 /**
- * @brief check if hyperthreading is enabled
+ * @brief check if hyperthreading is enabled on the system
  *
- * @return true, if hyperthreading is enabled on the system, else false
+ * @return true, if hyperthreading is enabled, else false
  */
 bool
-isHyperThreadingEnabled()
+isHyperthreadingEnabled()
 {
     const std::string active = getInfo("/sys/devices/system/cpu/smt/active");
     return active == "1";
 }
 
+/**
+ * @brief check if hyperthreading is suppored by the system
+ *
+ * @return
+ */
+bool
+isHyperthreadingSupported()
+{
+    const std::string htState = getInfo("/sys/devices/system/cpu/smt/control");
+    // htState can be "on", "off" or "notsupported"
+    return htState != "notsupported";
+}
+
+/**
+ * @brief changeHyperthreadingState
+ *
+ * @param newState true to enable and false to disable hyperthreading
+ *
+ * @return true, if hyperthreading is suppored and changes successfull, else false
+ */
+bool
+changeHyperthreadingState(const bool newState)
+{
+    const std::string filePath = "/sys/devices/system/cpu/smt/control";
+    const std::string htState = getInfo(filePath);
+
+    // check if hyperthreading is supported
+    if(htState == "notsupported") {
+        return false;
+    }
+
+    if(newState)
+    {
+        // check if hyperthreading is already active
+        if(htState == "on") {
+            return true;
+        }
+
+        // set new state
+        return writeToFile(filePath, "on");
+    }
+    else
+    {
+        // check if hyperthreading is already disabled
+        if(htState == "off") {
+            return true;
+        }
+
+        // set new state
+        return writeToFile(filePath, "off");
+    }
+
+    return true;
+}
 
 /**
  * @brief check to which cpu-socket a specific thread belongs to
@@ -172,6 +276,7 @@ getCpuSiblingId(const int32_t threadId)
     if(second == threadId) {
         return std::stoi(siblings.at(0));
     }
+
     return second;
 }
 
@@ -265,41 +370,6 @@ int64_t
 getMaximumSpeed(const int32_t threadId)
 {
     return getSpeed(threadId, "cpuinfo_max_freq");
-}
-
-/**
- * @brief write new value into a cpu-freq-file
- *
- * @param value new value to write into the file
- * @param threadId id of the thread to change
- * @param fileName target file-name to update
- *
- * @return false, if no permission to update files, else true
- */
-bool
-writeToFile(const int64_t value,
-            const int32_t threadId,
-            const std::string &fileName)
-{
-    // build target-path
-    const std::string filePath = "/sys/devices/system/cpu/cpu"
-                                 + std::to_string(threadId)
-                                 + "/cpufreq/"
-                                 + fileName;
-
-    // open file
-    std::ofstream outputFile;
-    outputFile.open(filePath, std::ios_base::in);
-    if(outputFile.is_open() == false) {
-        return false;
-    }
-
-    // update file
-    outputFile << std::to_string(value);
-    outputFile.flush();
-    outputFile.close();
-
-    return true;
 }
 
 /**

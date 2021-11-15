@@ -7,75 +7,81 @@
 #include <libKitsunemimiCommon/logger.h>
 #include <libKitsunemimiCommon/threading/thread.h>
 
+using namespace Kitsunemimi::Cpu;
+
 int main()
 {
     Kitsunemimi::initConsoleLogger(true);
 
-    std::cout<<"hyperthreading active: "<<Kitsunemimi::Cpu::isHyperThreadingEnabled()<<std::endl;
+    std::cout<<"hyperthreading active: "<<isHyperthreadingEnabled()<<std::endl;
+    std::cout<<"hyperthreading set to false: "<<changeHyperthreadingState(false)<<std::endl;
+    std::cout<<"hyperthreading active: "<<isHyperthreadingEnabled()<<std::endl;
+    std::cout<<"hyperthreading set to true: "<<changeHyperthreadingState(true)<<std::endl;
+    std::cout<<"hyperthreading active: "<<isHyperthreadingEnabled()<<std::endl;
 
     //==============================================================================================
 
     std::cout<<"=============================MEMORY============================="<<std::endl;
-    std::cout<<"total: "<<Kitsunemimi::Cpu::getTotalMemory()<<std::endl;
-    std::cout<<"free: "<<Kitsunemimi::Cpu::getFreeMemory()<<std::endl;
-    std::cout<<"page-size: "<<Kitsunemimi::Cpu::getPageSize()<<std::endl;
+    std::cout<<"total: "<<getTotalMemory()<<std::endl;
+    std::cout<<"free: "<<getFreeMemory()<<std::endl;
+    std::cout<<"page-size: "<<getPageSize()<<std::endl;
 
     //==============================================================================================
 
     std::cout<<"=============================CPU============================="<<std::endl;
 
-    std::cout<<"threads: "<<Kitsunemimi::Cpu::getNumberOfCpuThreads()<<std::endl;
-    std::cout<<"sockets: "<<Kitsunemimi::Cpu::getNumberOfCpuSockets()<<std::endl;
-    std::cout<<"socket of thead 1: "<<Kitsunemimi::Cpu::getCpuSocketId(1)<<std::endl;
-    std::cout<<"sibling of thread 1: "<<Kitsunemimi::Cpu::getCpuSiblingId(1)<<std::endl;
+    std::cout<<"threads: "<<getNumberOfCpuThreads()<<std::endl;
+    std::cout<<"sockets: "<<getNumberOfCpuSockets()<<std::endl;
+    std::cout<<"socket of thead 1: "<<getCpuSocketId(1)<<std::endl;
+    std::cout<<"sibling of thread 1: "<<getCpuSiblingId(1)<<std::endl;
 
-    std::cout<<"min of thread 1: "<<Kitsunemimi::Cpu::getCurrentMinimumSpeed(1)<<std::endl;
-    std::cout<<"max of thread 1: "<<Kitsunemimi::Cpu::getCurrentMaximumSpeed(1)<<std::endl;
-
-    for(int i = 0; i < 5; i++)
-    {
-        std::cout<<i<<" ------------------"<<std::endl;
-        std::cout<<"cur of thread 0: "<<Kitsunemimi::Cpu::getCurrentSpeed(0)<<std::endl;
-
-        sleep(1);
-    }
-
-    std::cout<<"#######################################################################"<<std::endl;
-    for(int i = 0; i < 4; i++) {
-        std::cout<<"set speed Min-speed to max: "<<Kitsunemimi::Cpu::setMinimumSpeed(i, 1000000000000)<<std::endl;
-    }
-    for(int i = 0; i < 15; i++)
-    {
-        std::cout<<i<<" ------------------"<<std::endl;
-        std::cout<<"cur of thread 0: "<<Kitsunemimi::Cpu::getCurrentSpeed(0)<<std::endl;
-        sleep(1);
-    }
-    std::cout<<"#######################################################################"<<std::endl;
-
-    for(int i = 0; i < 4; i++) {
-        Kitsunemimi::Cpu::resetSpeed(i);
-        std::cout<<"set speed to min: "<<Kitsunemimi::Cpu::setMaximumSpeed(i, 400000)<<std::endl;
-    }
-
-    for(int i = 0; i < 15; i++)
-    {
-        std::cout<<i<<" ------------------"<<std::endl;
-        std::cout<<"cur of thread 0: "<<Kitsunemimi::Cpu::getCurrentSpeed(0)<<std::endl;
-        std::cout<<"min of thread 0: "<<Kitsunemimi::Cpu::getCurrentMinimumSpeed(0)<<std::endl;
-        std::cout<<"max of thread 0: "<<Kitsunemimi::Cpu::getCurrentMaximumSpeed(0)<<std::endl;
-
-        sleep(1);
-    }
-    std::cout<<"#######################################################################"<<std::endl;
-
-    for(int i = 0; i < 4; i++) {
-        Kitsunemimi::Cpu::resetSpeed(i);
-    }
+    std::cout<<"min of thread 1: "<<getCurrentMinimumSpeed(1)<<std::endl;
+    std::cout<<"max of thread 1: "<<getCurrentMaximumSpeed(1)<<std::endl;
 
     for(int i = 0; i < 5; i++)
     {
         std::cout<<i<<" ------------------"<<std::endl;
-        std::cout<<"cur of thread 0: "<<Kitsunemimi::Cpu::getCurrentSpeed(0)<<std::endl;
+        std::cout<<"cur of thread 0: "<<getCurrentSpeed(0)<<std::endl;
+
+        sleep(1);
+    }
+
+    std::cout<<"#######################################################################"<<std::endl;
+    for(int i = 0; i < 4; i++) {
+        std::cout<<"set speed Min-speed to max: "<<setMinimumSpeed(i, 1000000000000)<<std::endl;
+    }
+    for(int i = 0; i < 15; i++)
+    {
+        std::cout<<i<<" ------------------"<<std::endl;
+        std::cout<<"cur of thread 0: "<<getCurrentSpeed(0)<<std::endl;
+        sleep(1);
+    }
+    std::cout<<"#######################################################################"<<std::endl;
+
+    for(int i = 0; i < 4; i++) {
+        resetSpeed(i);
+        std::cout<<"set speed to min: "<<setMaximumSpeed(i, 400000)<<std::endl;
+    }
+
+    for(int i = 0; i < 15; i++)
+    {
+        std::cout<<i<<" ------------------"<<std::endl;
+        std::cout<<"cur of thread 0: "<<getCurrentSpeed(0)<<std::endl;
+        std::cout<<"min of thread 0: "<<getCurrentMinimumSpeed(0)<<std::endl;
+        std::cout<<"max of thread 0: "<<getCurrentMaximumSpeed(0)<<std::endl;
+
+        sleep(1);
+    }
+    std::cout<<"#######################################################################"<<std::endl;
+
+    for(int i = 0; i < 4; i++) {
+        resetSpeed(i);
+    }
+
+    for(int i = 0; i < 5; i++)
+    {
+        std::cout<<i<<" ------------------"<<std::endl;
+        std::cout<<"cur of thread 0: "<<getCurrentSpeed(0)<<std::endl;
 
         sleep(1);
     }
@@ -84,7 +90,7 @@ int main()
 
     std::cout<<"=============================RAPL============================="<<std::endl;
 
-    Kitsunemimi::Cpu::Rapl rapl(0);
+    Rapl rapl(0);
     if(rapl.initRapl())
     {
         std::cout<<"info: "<<rapl.getInfo().toString()<<std::endl;
@@ -92,7 +98,7 @@ int main()
         for(int i = 0; i < 10; i++)
         {
             std::cout<<i<<" ------------------"<<std::endl;
-            Kitsunemimi::Cpu::RaplDiff diff = rapl.calculateDiff();
+            RaplDiff diff = rapl.calculateDiff();
             std::cout<<diff.toString()<<std::endl;
             sleep(1);
         }
