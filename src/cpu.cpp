@@ -18,17 +18,22 @@ namespace Cpu
 /**
  * @brief generic function to get file-content of a requested file
  *
- * @param path path to the file
+ * @param filePath path to the file
  *
  * @return file-content, if available, else empty string
  */
 const std::string
-getInfo(const std::string &path)
+getInfo(const std::string &filePath,
+        ErrorContainer &error)
 {
     // open file
     std::ifstream inFile;
-    inFile.open(path);
-    if(inFile.is_open() == false) {
+    inFile.open(filePath);
+    if(inFile.is_open() == false)
+    {
+        error.errorMessage = "can not open file to read content: \"" + filePath + "\"";
+        error.possibleSolution = "check if you have read-permissions to the file and check if"
+                                 " the file even exist on your system";
         return "";
     }
 
@@ -79,12 +84,17 @@ getRangeInfo(const std::string &info)
  */
 bool
 writeToFile(const std::string &filePath,
-            const std::string &value)
+            const std::string &value,
+            ErrorContainer &error)
 {
     // open file
     std::ofstream outputFile;
     outputFile.open(filePath, std::ios_base::in);
-    if(outputFile.is_open() == false) {
+    if(outputFile.is_open() == false)
+    {
+        error.errorMessage = "can not open file to write new value: \"" + filePath + "\"";
+        error.possibleSolution = "check if you have write-permissions to the file and check if"
+                                 " the file even exist on your system";
         return false;
     }
 
@@ -108,7 +118,8 @@ writeToFile(const std::string &filePath,
 bool
 writeToFile(const int64_t value,
             const int32_t threadId,
-            const std::string &fileName)
+            const std::string &fileName,
+            ErrorContainer &error)
 {
     // build target-path
     const std::string filePath = "/sys/devices/system/cpu/cpu"
@@ -116,7 +127,7 @@ writeToFile(const int64_t value,
                                  + "/cpufreq/"
                                  + fileName;
 
-    return writeToFile(filePath, std::to_string(value));
+    return writeToFile(filePath, std::to_string(value), error);
 }
 
 /**
@@ -125,10 +136,10 @@ writeToFile(const int64_t value,
  * @return -1 if target-file not found or broken, else number of cpu-sockets
  */
 int32_t
-getNumberOfCpuPackages()
+getNumberOfCpuPackages(ErrorContainer &error)
 {
     // get info from requested file
-    const std::string info = getInfo("/sys/devices/system/node/possible");
+    const std::string info = getInfo("/sys/devices/system/node/possible", error);
     if(info == "") {
         return -1;
     }
@@ -142,10 +153,10 @@ getNumberOfCpuPackages()
  * @return -1 if target-file not found or broken, else number of cpu-threads
  */
 int32_t
-getNumberOfCpuThreads()
+getNumberOfCpuThreads(ErrorContainer &error)
 {
     // get info from requested file
-    const std::string info = getInfo("/sys/devices/system/cpu/possible");
+    const std::string info = getInfo("/sys/devices/system/cpu/possible", error);
     if(info == "") {
         return -1;
     }
@@ -159,9 +170,13 @@ getNumberOfCpuThreads()
  * @return true, if hyperthreading is enabled, else false
  */
 bool
-isHyperthreadingEnabled()
+isHyperthreadingEnabled(ErrorContainer &error)
 {
-    const std::string active = getInfo("/sys/devices/system/cpu/smt/active");
+    const std::string active = getInfo("/sys/devices/system/cpu/smt/active", error);
+    if(active == "") {
+        return false;
+    }
+
     return active == "1";
 }
 
@@ -171,9 +186,13 @@ isHyperthreadingEnabled()
  * @return
  */
 bool
-isHyperthreadingSupported()
+isHyperthreadingSupported(ErrorContainer &error)
 {
-    const std::string htState = getInfo("/sys/devices/system/cpu/smt/control");
+    const std::string htState = getInfo("/sys/devices/system/cpu/smt/control", error);
+    if(htState == "") {
+        return false;
+    }
+
     // htState can be "on", "off" or "notsupported"
     return htState != "notsupported";
 }
@@ -186,10 +205,10 @@ isHyperthreadingSupported()
  * @return true, if hyperthreading is suppored and changes successfull, else false
  */
 bool
-changeHyperthreadingState(const bool newState)
+changeHyperthreadingState(const bool newState, ErrorContainer &error)
 {
     const std::string filePath = "/sys/devices/system/cpu/smt/control";
-    const std::string htState = getInfo(filePath);
+    const std::string htState = getInfo(filePath, error);
 
     // check if hyperthreading is supported
     if(htState == "notsupported") {
@@ -204,7 +223,7 @@ changeHyperthreadingState(const bool newState)
         }
 
         // set new state
-        return writeToFile(filePath, "on");
+        return writeToFile(filePath, "on", error);
     }
     else
     {
@@ -214,7 +233,7 @@ changeHyperthreadingState(const bool newState)
         }
 
         // set new state
-        return writeToFile(filePath, "off");
+        return writeToFile(filePath, "off", error);
     }
 
     return true;
@@ -228,7 +247,7 @@ changeHyperthreadingState(const bool newState)
  * @return -1 if target-file not found or broken, else id of cpu-socket
  */
 int32_t
-getCpuPackageId(const int32_t threadId)
+getCpuPackageId(const int32_t threadId, ErrorContainer &error)
 {
     // build request-path
     const std::string filePath = "/sys/devices/system/cpu/cpu"
@@ -236,7 +255,7 @@ getCpuPackageId(const int32_t threadId)
                                  + "/topology/physical_package_id";
 
     // get info from requested file
-    const std::string info = getInfo(filePath);
+    const std::string info = getInfo(filePath, error);
     if(info == "") {
         return -1;
     }
@@ -252,7 +271,7 @@ getCpuPackageId(const int32_t threadId)
  * @return -1 if target-file not found or broken, else id of cpu-core
  */
 int32_t
-getCpuCoreId(const int32_t threadId)
+getCpuCoreId(const int32_t threadId, ErrorContainer &error)
 {
     // build request-path
     const std::string filePath = "/sys/devices/system/cpu/cpu"
@@ -260,7 +279,7 @@ getCpuCoreId(const int32_t threadId)
                                  + "/topology/core_id";
 
     // get info from requested file
-    const std::string info = getInfo(filePath);
+    const std::string info = getInfo(filePath, error);
     if(info == "") {
         return -1;
     }
@@ -277,7 +296,7 @@ getCpuCoreId(const int32_t threadId)
  * @return -1 if target-file not found or broken, else id of the thread-sibling
  */
 int32_t
-getCpuSiblingId(const int32_t threadId)
+getCpuSiblingId(const int32_t threadId, ErrorContainer &error)
 {
     // build request-path
     const std::string filePath = "/sys/devices/system/cpu/cpu"
@@ -285,7 +304,7 @@ getCpuSiblingId(const int32_t threadId)
                                  + "/topology/thread_siblings_list";
 
     // get info from requested file
-    const std::string info = getInfo(filePath);
+    const std::string info = getInfo(filePath, error);
     if(info == "") {
         return -1;
     }
@@ -316,7 +335,8 @@ getCpuSiblingId(const int32_t threadId)
  */
 int64_t
 getSpeed(const int32_t threadId,
-         const std::string &fileName)
+         const std::string &fileName,
+         ErrorContainer &error)
 {
     // build request-path
     const std::string filePath = "/sys/devices/system/cpu/cpu"
@@ -325,7 +345,7 @@ getSpeed(const int32_t threadId,
                                  + fileName;
 
     // get info from requested file
-    const std::string info = getInfo(filePath);
+    const std::string info = getInfo(filePath, error);
     if(info == "") {
         return -1;
     }
@@ -341,9 +361,9 @@ getSpeed(const int32_t threadId,
  * @return -1, if file not exist, else speed-value in Hz
  */
 int64_t
-getCurrentMinimumSpeed(const int32_t threadId)
+getCurrentMinimumSpeed(const int32_t threadId, ErrorContainer &error)
 {
-    return getSpeed(threadId, "scaling_min_freq");
+    return getSpeed(threadId, "scaling_min_freq", error);
 }
 
 /**
@@ -354,9 +374,9 @@ getCurrentMinimumSpeed(const int32_t threadId)
  * @return -1, if file not exist, else speed-value in Hz
  */
 int64_t
-getCurrentMaximumSpeed(const int32_t threadId)
+getCurrentMaximumSpeed(const int32_t threadId, ErrorContainer &error)
 {
-    return getSpeed(threadId, "scaling_max_freq");
+    return getSpeed(threadId, "scaling_max_freq", error);
 }
 
 /**
@@ -367,9 +387,9 @@ getCurrentMaximumSpeed(const int32_t threadId)
  * @return -1, if file not exist, else speed-value in Hz
  */
 int64_t
-getCurrentSpeed(const int32_t threadId)
+getCurrentSpeed(const int32_t threadId, ErrorContainer &error)
 {
-    return getSpeed(threadId, "scaling_cur_freq");
+    return getSpeed(threadId, "scaling_cur_freq", error);
 }
 
 /**
@@ -380,9 +400,9 @@ getCurrentSpeed(const int32_t threadId)
  * @return -1, if file not exist, else speed-value in Hz
  */
 int64_t
-getMinimumSpeed(const int32_t threadId)
+getMinimumSpeed(const int32_t threadId, ErrorContainer &error)
 {
-    return getSpeed(threadId, "cpuinfo_min_freq");
+    return getSpeed(threadId, "cpuinfo_min_freq", error);
 }
 
 /**
@@ -393,9 +413,9 @@ getMinimumSpeed(const int32_t threadId)
  * @return -1, if file not exist, else speed-value in Hz
  */
 int64_t
-getMaximumSpeed(const int32_t threadId)
+getMaximumSpeed(const int32_t threadId, ErrorContainer &error)
 {
-    return getSpeed(threadId, "cpuinfo_max_freq");
+    return getSpeed(threadId, "cpuinfo_max_freq", error);
 }
 
 /**
@@ -407,21 +427,21 @@ getMaximumSpeed(const int32_t threadId)
  * @return false, if no permission to update files, else true
  */
 bool
-setMinimumSpeed(const int32_t threadId, int64_t newSpeed)
+setMinimumSpeed(const int32_t threadId, int64_t newSpeed, ErrorContainer &error)
 {
     // fix lower border
-    const int64_t minSpeed = getMinimumSpeed(threadId);
+    const int64_t minSpeed = getMinimumSpeed(threadId, error);
     if(newSpeed < minSpeed) {
         newSpeed = minSpeed;
     }
 
     // fix upper border
-    const int64_t maxSpeed = getMaximumSpeed(threadId);
+    const int64_t maxSpeed = getMaximumSpeed(threadId, error);
     if(newSpeed > maxSpeed) {
         newSpeed = maxSpeed;
     }
 
-    return writeToFile(newSpeed, threadId, "scaling_min_freq");
+    return writeToFile(newSpeed, threadId, "scaling_min_freq", error);
 }
 
 /**
@@ -433,21 +453,21 @@ setMinimumSpeed(const int32_t threadId, int64_t newSpeed)
  * @return false, if no permission to update files, else true
  */
 bool
-setMaximumSpeed(const int32_t threadId, int64_t newSpeed)
+setMaximumSpeed(const int32_t threadId, int64_t newSpeed, ErrorContainer &error)
 {
     // fix lower border
-    const int64_t minSpeed = getMinimumSpeed(threadId);
+    const int64_t minSpeed = getMinimumSpeed(threadId, error);
     if(newSpeed < minSpeed) {
         newSpeed = minSpeed;
     }
 
     // fix upper border
-    const int64_t maxSpeed = getMaximumSpeed(threadId);
+    const int64_t maxSpeed = getMaximumSpeed(threadId, error);
     if(newSpeed > maxSpeed) {
         newSpeed = maxSpeed;
     }
 
-    return writeToFile(newSpeed, threadId, "scaling_max_freq");
+    return writeToFile(newSpeed, threadId, "scaling_max_freq", error);
 }
 
 /**
@@ -458,15 +478,23 @@ setMaximumSpeed(const int32_t threadId, int64_t newSpeed)
  * @return false, if no permission to update files, else true
  */
 bool
-resetSpeed(const int32_t threadId)
+resetSpeed(const int32_t threadId, ErrorContainer &error)
 {
     // reset max-speed
-    if(setMaximumSpeed(threadId, getMaximumSpeed(threadId)) == false) {
+    const int64_t maxSpeed = getMaximumSpeed(threadId, error);
+    if(maxSpeed == -1) {
+        return false;
+    }
+    if(setMaximumSpeed(threadId, maxSpeed, error) == false) {
         return false;
     }
 
     // reset min-speed
-    if(setMinimumSpeed(threadId, getMinimumSpeed(threadId)) == false) {
+    const int64_t minSpeed = getMinimumSpeed(threadId, error);
+    if(minSpeed == -1) {
+        return false;
+    }
+    if(setMinimumSpeed(threadId, minSpeed, error) == false) {
         return false;
     }
 

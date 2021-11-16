@@ -13,11 +13,13 @@ int main()
 {
     Kitsunemimi::initConsoleLogger(true);
 
-    std::cout<<"hyperthreading active: "<<isHyperthreadingEnabled()<<std::endl;
-    std::cout<<"hyperthreading set to false: "<<changeHyperthreadingState(false)<<std::endl;
-    std::cout<<"hyperthreading active: "<<isHyperthreadingEnabled()<<std::endl;
-    std::cout<<"hyperthreading set to true: "<<changeHyperthreadingState(true)<<std::endl;
-    std::cout<<"hyperthreading active: "<<isHyperthreadingEnabled()<<std::endl;
+    Kitsunemimi::ErrorContainer error;
+
+    std::cout<<"hyperthreading active: "<<isHyperthreadingEnabled(error)<<std::endl;
+    std::cout<<"hyperthreading set to false: "<<changeHyperthreadingState(false, error)<<std::endl;
+    std::cout<<"hyperthreading active: "<<isHyperthreadingEnabled(error)<<std::endl;
+    std::cout<<"hyperthreading set to true: "<<changeHyperthreadingState(true, error)<<std::endl;
+    std::cout<<"hyperthreading active: "<<isHyperthreadingEnabled(error)<<std::endl;
 
     //==============================================================================================
 
@@ -30,58 +32,58 @@ int main()
 
     std::cout<<"=============================CPU============================="<<std::endl;
 
-    std::cout<<"threads: "<<getNumberOfCpuThreads()<<std::endl;
-    std::cout<<"sockets: "<<getNumberOfCpuPackages()<<std::endl;
-    std::cout<<"socket of thead 1: "<<getCpuPackageId(1)<<std::endl;
-    std::cout<<"sibling of thread 1: "<<getCpuSiblingId(1)<<std::endl;
+    std::cout<<"threads: "<<getNumberOfCpuThreads(error)<<std::endl;
+    std::cout<<"sockets: "<<getNumberOfCpuPackages(error)<<std::endl;
+    std::cout<<"socket of thead 1: "<<getCpuPackageId(1, error)<<std::endl;
+    std::cout<<"sibling of thread 1: "<<getCpuSiblingId(1, error)<<std::endl;
 
-    std::cout<<"min of thread 1: "<<getCurrentMinimumSpeed(1)<<std::endl;
-    std::cout<<"max of thread 1: "<<getCurrentMaximumSpeed(1)<<std::endl;
-
-    for(int i = 0; i < 5; i++)
-    {
-        std::cout<<i<<" ------------------"<<std::endl;
-        std::cout<<"cur of thread 0: "<<getCurrentSpeed(0)<<std::endl;
-
-        sleep(1);
-    }
-
-    std::cout<<"#######################################################################"<<std::endl;
-    for(int i = 0; i < 4; i++) {
-        std::cout<<"set speed Min-speed to max: "<<setMinimumSpeed(i, 1000000000000)<<std::endl;
-    }
-    for(int i = 0; i < 15; i++)
-    {
-        std::cout<<i<<" ------------------"<<std::endl;
-        std::cout<<"cur of thread 0: "<<getCurrentSpeed(0)<<std::endl;
-        sleep(1);
-    }
-    std::cout<<"#######################################################################"<<std::endl;
-
-    for(int i = 0; i < 4; i++) {
-        resetSpeed(i);
-        std::cout<<"set speed to min: "<<setMaximumSpeed(i, 400000)<<std::endl;
-    }
-
-    for(int i = 0; i < 15; i++)
-    {
-        std::cout<<i<<" ------------------"<<std::endl;
-        std::cout<<"cur of thread 0: "<<getCurrentSpeed(0)<<std::endl;
-        std::cout<<"min of thread 0: "<<getCurrentMinimumSpeed(0)<<std::endl;
-        std::cout<<"max of thread 0: "<<getCurrentMaximumSpeed(0)<<std::endl;
-
-        sleep(1);
-    }
-    std::cout<<"#######################################################################"<<std::endl;
-
-    for(int i = 0; i < 4; i++) {
-        resetSpeed(i);
-    }
+    std::cout<<"min of thread 1: "<<getCurrentMinimumSpeed(1, error)<<std::endl;
+    std::cout<<"max of thread 1: "<<getCurrentMaximumSpeed(1, error)<<std::endl;
 
     for(int i = 0; i < 5; i++)
     {
         std::cout<<i<<" ------------------"<<std::endl;
-        std::cout<<"cur of thread 0: "<<getCurrentSpeed(0)<<std::endl;
+        std::cout<<"cur of thread 0: "<<getCurrentSpeed(0, error)<<std::endl;
+
+        sleep(1);
+    }
+
+    std::cout<<"#######################################################################"<<std::endl;
+    for(int i = 0; i < 4; i++) {
+        std::cout<<"set speed Min-speed to max: "<<setMinimumSpeed(i, 1000000000, error)<<std::endl;
+    }
+    for(int i = 0; i < 15; i++)
+    {
+        std::cout<<i<<" ------------------"<<std::endl;
+        std::cout<<"cur of thread 0: "<<getCurrentSpeed(0, error)<<std::endl;
+        sleep(1);
+    }
+    std::cout<<"#######################################################################"<<std::endl;
+
+    for(int i = 0; i < 4; i++) {
+        resetSpeed(i, error);
+        std::cout<<"set speed to min: "<<setMaximumSpeed(i, 400000, error)<<std::endl;
+    }
+
+    for(int i = 0; i < 15; i++)
+    {
+        std::cout<<i<<" ------------------"<<std::endl;
+        std::cout<<"cur of thread 0: "<<getCurrentSpeed(0, error)<<std::endl;
+        std::cout<<"min of thread 0: "<<getCurrentMinimumSpeed(0, error)<<std::endl;
+        std::cout<<"max of thread 0: "<<getCurrentMaximumSpeed(0, error)<<std::endl;
+
+        sleep(1);
+    }
+    std::cout<<"#######################################################################"<<std::endl;
+
+    for(int i = 0; i < 4; i++) {
+        resetSpeed(i, error);
+    }
+
+    for(int i = 0; i < 5; i++)
+    {
+        std::cout<<i<<" ------------------"<<std::endl;
+        std::cout<<"cur of thread 0: "<<getCurrentSpeed(0, error)<<std::endl;
 
         sleep(1);
     }
