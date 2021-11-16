@@ -172,12 +172,12 @@ Rapl::openMSR()
     if(m_fd <= 0)
     {
         ErrorContainer error;
-        error.errorMessage = "Failed to open path:" + path;
+        error.errorMessage = "Failed to open path: " + path;
         error.possibleSolution = "1. Maybe the msr-kernel-module still have to be loaded with: "
-                                 "'modporobe msr' or 'modprobe intel_rapl_msr'\n"
+                                 "\"modporobe msr\" or \"modprobe intel_rapl_msr\"\n"
                                  ""
                                  "2. Check if you have read-permissions to the path: "
-                                 "'" + path + "'";
+                                 "\"" + path + "\"";
         LOG_ERROR(error);
         return false;
     }
