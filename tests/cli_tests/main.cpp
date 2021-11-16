@@ -100,7 +100,7 @@ int main()
             std::cout<<i<<" ------------------"<<std::endl;
             RaplDiff diff = rapl.calculateDiff();
             std::cout<<diff.toString()<<std::endl;
-            sleep(1);
+            sleep(10);
         }
     }
     else

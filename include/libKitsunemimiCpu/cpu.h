@@ -19,9 +19,10 @@ namespace Cpu
 {
 
 // topological
-int32_t getNumberOfCpuThreads();
 int32_t getNumberOfCpuSockets();
+int32_t getNumberOfCpuThreads();
 int32_t getCpuSocketId(const int32_t threadId);
+int32_t getCpuCoreId(const int32_t threadId);
 int32_t getCpuSiblingId(const int32_t threadId);
 
 // hyperthreading

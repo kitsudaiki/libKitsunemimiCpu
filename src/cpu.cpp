@@ -45,6 +45,31 @@ getInfo(const std::string &path)
 }
 
 /**
+ * @brief get max-value of a range-info-output
+ *
+ * @param info string with the info to parse
+ *
+ * @return -1 if info is invalid, else the maximum number within the range
+ */
+int32_t
+getRangeInfo(const std::string &info)
+{
+    // handle case of only one core
+    if(info == "0") {
+        return 1;
+    }
+
+    // process content
+    std::vector<std::string> numberRange;
+    Kitsunemimi::splitStringByDelimiter(numberRange, info, '-');
+    if(numberRange.size() < 2) {
+        return -1;
+    }
+
+    return std::stoi(numberRange.at(1)) + 1;
+}
+
+/**
  * @brief write value into file
  *
  * @param filePath absolute file-path
@@ -95,35 +120,6 @@ writeToFile(const int64_t value,
 }
 
 /**
- * @brief get total number of cpu-threads of all cpu-sockets of the system
- *
- * @return -1 if target-file not found or broken, else number of cpu-threads
- */
-int32_t
-getNumberOfCpuThreads()
-{
-    // get info from requested file
-    const std::string info = getInfo("/sys/devices/system/cpu/possible");
-    if(info == "") {
-        return -1;
-    }
-
-    // handle case of only one socket
-    if(info == "0") {
-        return 1;
-    }
-
-    // process content
-    std::vector<std::string> numberRange;
-    Kitsunemimi::splitStringByDelimiter(numberRange, info, '-');
-    if(numberRange.size() < 2) {
-        return -1;
-    }
-
-    return std::stoi(numberRange.at(1)) + 1;
-}
-
-/**
  * @brief get number of cpu-sockets of the system
  *
  * @return -1 if target-file not found or broken, else number of cpu-sockets
@@ -137,19 +133,24 @@ getNumberOfCpuSockets()
         return -1;
     }
 
-    // handle case of only one socket
-    if(info == "0") {
-        return 1;
-    }
+    return getRangeInfo(info);
+}
 
-    // process content
-    std::vector<std::string> numberRange;
-    Kitsunemimi::splitStringByDelimiter(numberRange, info, '-');
-    if(numberRange.size() < 2) {
+/**
+ * @brief get total number of cpu-threads of all cpu-sockets of the system
+ *
+ * @return -1 if target-file not found or broken, else number of cpu-threads
+ */
+int32_t
+getNumberOfCpuThreads()
+{
+    // get info from requested file
+    const std::string info = getInfo("/sys/devices/system/cpu/possible");
+    if(info == "") {
         return -1;
     }
 
-    return std::stoi(numberRange.at(1)) + 1;
+    return getRangeInfo(info);
 }
 
 /**
@@ -242,6 +243,31 @@ getCpuSocketId(const int32_t threadId)
 
     return std::stoi(info);
 }
+
+/**
+ * @brief get id of the physical core of a cpu-thread
+ *
+ * @param threadId id of the thread to check
+ *
+ * @return -1 if target-file not found or broken, else id of cpu-core
+ */
+int32_t
+getCpuCoreId(const int32_t threadId)
+{
+    // build request-path
+    const std::string filePath = "/sys/devices/system/cpu/cpu"
+                                 + std::to_string(threadId)
+                                 + "/topology/core_id";
+
+    // get info from requested file
+    const std::string info = getInfo(filePath);
+    if(info == "") {
+        return -1;
+    }
+
+    return std::stoi(info);
+}
+
 
 /**
  * @brief get thread-id of a sibling to another thread-id in case of hyper-threading
