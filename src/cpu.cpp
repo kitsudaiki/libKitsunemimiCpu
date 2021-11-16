@@ -125,7 +125,7 @@ writeToFile(const int64_t value,
  * @return -1 if target-file not found or broken, else number of cpu-sockets
  */
 int32_t
-getNumberOfCpuSockets()
+getNumberOfCpuPackages()
 {
     // get info from requested file
     const std::string info = getInfo("/sys/devices/system/node/possible");
@@ -228,7 +228,7 @@ changeHyperthreadingState(const bool newState)
  * @return -1 if target-file not found or broken, else id of cpu-socket
  */
 int32_t
-getCpuSocketId(const int32_t threadId)
+getCpuPackageId(const int32_t threadId)
 {
     // build request-path
     const std::string filePath = "/sys/devices/system/cpu/cpu"

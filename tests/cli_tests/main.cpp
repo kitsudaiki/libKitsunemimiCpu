@@ -31,8 +31,8 @@ int main()
     std::cout<<"=============================CPU============================="<<std::endl;
 
     std::cout<<"threads: "<<getNumberOfCpuThreads()<<std::endl;
-    std::cout<<"sockets: "<<getNumberOfCpuSockets()<<std::endl;
-    std::cout<<"socket of thead 1: "<<getCpuSocketId(1)<<std::endl;
+    std::cout<<"sockets: "<<getNumberOfCpuPackages()<<std::endl;
+    std::cout<<"socket of thead 1: "<<getCpuPackageId(1)<<std::endl;
     std::cout<<"sibling of thread 1: "<<getCpuSiblingId(1)<<std::endl;
 
     std::cout<<"min of thread 1: "<<getCurrentMinimumSpeed(1)<<std::endl;
