@@ -23,6 +23,9 @@ namespace Cpu
 
 struct RaplDiff
 {
+    // info: pp0 = cores
+    //       pp1 = graphics
+
     double pkgDiff = 0;
     double pp0Diff = 0;
     double pp1Diff = 0;
@@ -82,6 +85,7 @@ class Rapl
 public:
     Rapl(const int32_t threadId);
     bool initRapl();
+    bool isActive() const;
 
     RaplDiff calculateDiff();
     RaplInfo getInfo() const;

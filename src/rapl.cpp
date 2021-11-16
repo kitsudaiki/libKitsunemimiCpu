@@ -125,6 +125,17 @@ Rapl::initRapl()
 }
 
 /**
+ * @brief check if rapl is initialized
+ *
+ * @return true, if rapl was successfully initialized, esle false
+ */
+bool
+Rapl::isActive() const
+{
+    return m_isInit;
+}
+
+/**
  * @brief check if the pp1-energy-value is supported by the cpu
  *
  * @return false, if sandy-bridge or ivy-bridge cpu, else true
