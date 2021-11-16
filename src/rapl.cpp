@@ -75,25 +75,23 @@ Rapl::Rapl(const int32_t threadId)
 /**
  * @brief initalize rapl-class by open and reading msr-file
  *
- * @param errorMessage reference for error-return
+ * @param error reference for error-output
  *
  * @return false, if already initialized or can not open msr-file, else true
  */
 bool
-Rapl::initRapl()
+Rapl::initRapl(ErrorContainer &error)
 {
     // check if already initialized
     if(m_isInit)
     {
-        ErrorContainer error;
         error.errorMessage = "this rapl-class was already successfully initialized";
         error.possibleSolution = "nothing to do";
-        LOG_ERROR(error);
         return false;
     }
 
     // try to open msr-file
-    if(openMSR() == false) {
+    if(openMSR(error) == false) {
         return false;
     }
 
@@ -160,25 +158,23 @@ Rapl::checkPP1()
 /**
  * @brief open msr-file for the specific thread
  *
- * @param errorMessage reference for error-return
+ * @param error reference for error-output
  *
  * @return false, if file doesn't exist or can not be opened, else true
  */
 bool
-Rapl::openMSR()
+Rapl::openMSR(ErrorContainer &error)
 {
     const std::string path = "/dev/cpu/" + std::to_string(m_threadId) + "/msr";
     m_fd = open(path.c_str(), O_RDONLY);
     if(m_fd <= 0)
     {
-        ErrorContainer error;
         error.errorMessage = "Failed to open path: " + path;
         error.possibleSolution = "1. Maybe the msr-kernel-module still have to be loaded with: "
                                  "\"modporobe msr\" or \"modprobe intel_rapl_msr\"\n"
                                  ""
                                  "2. Check if you have read-permissions to the path: "
                                  "\"" + path + "\"";
-        LOG_ERROR(error);
         return false;
     }
 

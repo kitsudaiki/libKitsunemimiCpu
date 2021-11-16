@@ -93,7 +93,7 @@ int main()
     std::cout<<"=============================RAPL============================="<<std::endl;
 
     Rapl rapl(0);
-    if(rapl.initRapl())
+    if(rapl.initRapl(error))
     {
         std::cout<<"info: "<<rapl.getInfo().toString()<<std::endl;
 
@@ -107,7 +107,7 @@ int main()
     }
     else
     {
-        std::cout<<"RAPL not available"<<std::endl;
+        LOG_ERROR(error);
     }
     //==============================================================================================
 

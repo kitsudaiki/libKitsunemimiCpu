@@ -84,7 +84,7 @@ class Rapl
 {
 public:
     Rapl(const int32_t threadId);
-    bool initRapl();
+    bool initRapl(ErrorContainer &error);
     bool isActive() const;
 
     RaplDiff calculateDiff();
@@ -108,7 +108,7 @@ private:
     RaplInfo m_info;
 
     bool checkPP1();
-    bool openMSR();
+    bool openMSR(ErrorContainer &error);
     uint64_t readMSR(const int32_t offset);
 };
 
