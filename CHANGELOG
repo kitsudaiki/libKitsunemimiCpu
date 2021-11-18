@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.11.0] - 2021-11-19
+
+### Added
+- check if hyperthreading is supported and enabled
+- swtich to enable/disable hyperthreading
+- function to get core-id of a thread
+- check if raple is active
+- more error-messages and some missing validations
+
+### Changed
+- use error-container of libKitsunemimiCommon for error-output
+- change J to Ws in Rapl-output
+- rename socket to package
+
+
 ## [0.1.1] - 2021-10-27
 
 ### Changed
