@@ -85,9 +85,8 @@ Rapl::initRapl(ErrorContainer &error)
     // check if already initialized
     if(m_isInit)
     {
-        error.errorMessage = "this rapl-class was already successfully initialized";
-        error.possibleSolution = "nothing to do";
-        return false;
+        LOG_WARNING("this rapl-class was already successfully initialized");
+        return true;
     }
 
     // try to open msr-file
@@ -169,12 +168,10 @@ Rapl::openMSR(ErrorContainer &error)
     m_fd = open(path.c_str(), O_RDONLY);
     if(m_fd <= 0)
     {
-        error.errorMessage = "Failed to open path: " + path;
-        error.possibleSolution = "1. Maybe the msr-kernel-module still have to be loaded with: "
-                                 "\"modporobe msr\" or \"modprobe intel_rapl_msr\"\n"
-                                 ""
-                                 "2. Check if you have read-permissions to the path: "
-                                 "\"" + path + "\"";
+        error.addMeesage("Failed to open path: \"" + path + "\"");
+        error.addSolution("Maybe the msr-kernel-module still have to be loaded with "
+                          "\"modporobe msr\" or \"modprobe intel_rapl_msr\"");
+        error.addSolution("Check if you have read-permissions to the path: \"" + path + "\"");
         return false;
     }
 
@@ -195,8 +192,7 @@ Rapl::readMSR(const int32_t offset)
     if(pread(m_fd, &data, sizeof(data), offset) != sizeof(data))
     {
         ErrorContainer error;
-        error.errorMessage = "can not read MSR of cpu even the msr-file is open";
-        error.possibleSolution = "(no solution known)";
+        error.addMeesage("can not read MSR of cpu even the msr-file is open");
         LOG_ERROR(error);
         return 0;
     }
