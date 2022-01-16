@@ -67,7 +67,7 @@ namespace Cpu
 /**
  * @brief constructor
  */
-Rapl::Rapl(const int32_t threadId)
+Rapl::Rapl(const uint64_t threadId)
 {
     m_threadId = threadId;
 }
@@ -183,7 +183,7 @@ Rapl::openMSR(ErrorContainer &error)
  *
  * @param offset value-specific offset
  *
- * @return requeste value, if successfull, else 0
+ * @return requeste value, if successful, else 0
  */
 uint64_t
 Rapl::readMSR(const int32_t offset)

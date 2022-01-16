@@ -21,11 +21,11 @@ namespace Cpu
 {
 
 // topological
-int32_t getNumberOfCpuPackages(ErrorContainer &error);
-int32_t getNumberOfCpuThreads(ErrorContainer &error);
-int32_t getCpuPackageId(const int32_t threadId, ErrorContainer &error);
-int32_t getCpuCoreId(const int32_t threadId, ErrorContainer &error);
-int32_t getCpuSiblingId(const int32_t threadId, ErrorContainer &error);
+bool getNumberOfCpuPackages(uint64_t &result, ErrorContainer &error);
+bool getNumberOfCpuThreads(uint64_t &result, ErrorContainer &error);
+bool getCpuPackageId(uint64_t &result, const uint64_t threadId, ErrorContainer &error);
+bool getCpuCoreId(uint64_t &result, const uint64_t threadId, ErrorContainer &error);
+bool getCpuSiblingId(uint64_t &result, const uint64_t threadId, ErrorContainer &error);
 
 // hyperthreading
 bool isHyperthreadingEnabled(ErrorContainer &error);
@@ -33,16 +33,16 @@ bool isHyperthreadingSupported(ErrorContainer &error);
 bool changeHyperthreadingState(const bool newState, ErrorContainer &error);
 
 // speed
-int64_t getMinimumSpeed(const int32_t threadId, ErrorContainer &error);
-int64_t getMaximumSpeed(const int32_t threadId, ErrorContainer &error);
-int64_t getCurrentSpeed(const int32_t threadId, ErrorContainer &error);
+bool getMinimumSpeed(uint64_t &result, const uint64_t threadId, ErrorContainer &error);
+bool getMaximumSpeed(uint64_t &result, const uint64_t threadId, ErrorContainer &error);
+bool getCurrentSpeed(uint64_t &result, const uint64_t threadId, ErrorContainer &error);
 
-int64_t getCurrentMinimumSpeed(const int32_t threadId, ErrorContainer &error);
-int64_t getCurrentMaximumSpeed(const int32_t threadId, ErrorContainer &error);
+bool getCurrentMinimumSpeed(uint64_t &result, const uint64_t threadId, ErrorContainer &error);
+bool getCurrentMaximumSpeed(uint64_t &result, const uint64_t threadId, ErrorContainer &error);
 
-bool setMinimumSpeed(const int32_t threadId, int64_t newSpeed, ErrorContainer &error);
-bool setMaximumSpeed(const int32_t threadId, int64_t newSpeed, ErrorContainer &error);
-bool resetSpeed(const int32_t threadId, ErrorContainer &error);
+bool setMinimumSpeed(const uint64_t threadId, uint64_t newSpeed, ErrorContainer &error);
+bool setMaximumSpeed(const uint64_t threadId, uint64_t newSpeed, ErrorContainer &error);
+bool resetSpeed(const uint64_t threadId, ErrorContainer &error);
 
 } // namespace Cpu
 } // namespace Kitsunemimi

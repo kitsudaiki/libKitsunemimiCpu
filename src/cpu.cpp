@@ -53,26 +53,30 @@ getInfo(const std::string &filePath,
 /**
  * @brief get max-value of a range-info-output
  *
+ * @param result reference for result-output
  * @param info string with the info to parse
  *
- * @return -1 if info is invalid, else the maximum number within the range
+ * @return true, if successfull, else false
  */
-int32_t
-getRangeInfo(const std::string &info)
+bool
+getRangeInfo(uint64_t &result, const std::string &info)
 {
     // handle case of only one core
-    if(info == "0") {
-        return 1;
+    if(info == "0")
+    {
+        result = 1;
+        return true;
     }
 
     // process content
     std::vector<std::string> numberRange;
     Kitsunemimi::splitStringByDelimiter(numberRange, info, '-');
     if(numberRange.size() < 2) {
-        return -1;
+        return false;
     }
 
-    return std::stoi(numberRange.at(1)) + 1;
+    result = std::stoi(numberRange.at(1)) + 1;
+    return true;
 }
 
 /**
@@ -119,8 +123,8 @@ writeToFile(const std::string &filePath,
  * @return false, if no permission to update files, else true
  */
 bool
-writeToFile(const int64_t value,
-            const int32_t threadId,
+writeToFile(const uint64_t value,
+            const uint64_t threadId,
             const std::string &fileName,
             ErrorContainer &error)
 {
@@ -136,12 +140,13 @@ writeToFile(const int64_t value,
 /**
  * @brief get number of cpu-sockets of the system
  *
+ * @param result reference for result-output
  * @param error reference for error-output
  *
- * @return -1 if target-file not found or broken, else number of cpu-sockets
+ * @return true, if successful, else false
  */
-int32_t
-getNumberOfCpuPackages(ErrorContainer &error)
+bool
+getNumberOfCpuPackages(uint64_t &result, ErrorContainer &error)
 {
     // get info from requested file
     const std::string filePath = "/sys/devices/system/node/possible";
@@ -150,29 +155,32 @@ getNumberOfCpuPackages(ErrorContainer &error)
     {
         error.addMeesage("Failed to get number of cpu-packages, "
                          "because can not read file \"" + filePath + "\"");
-        return -1;
+        return false;
     }
 
     // process file-content
-    const int32_t range = getRangeInfo(info);
-    if(range == -1)
+    uint64_t range = 0;
+    if(getRangeInfo(range, info) == false)
     {
         error.addMeesage("Failed to get number of cpu-packages, "
                          "because something seems to be broken in file \"" + filePath + "\"");
+        return false;
     }
 
-    return range;
+    result = range;
+    return true;
 }
 
 /**
  * @brief get total number of cpu-threads of all cpu-sockets of the system
  *
+ * @param result reference for result-output
  * @param error reference for error-output
  *
- * @return -1 if target-file not found or broken, else number of cpu-threads
+ * @return true, if successful, else false
  */
-int32_t
-getNumberOfCpuThreads(ErrorContainer &error)
+bool
+getNumberOfCpuThreads(uint64_t &result, ErrorContainer &error)
 {
     // get info from requested file
     const std::string filePath = "/sys/devices/system/cpu/possible";
@@ -181,18 +189,20 @@ getNumberOfCpuThreads(ErrorContainer &error)
     {
         error.addMeesage("Failed to get number of cpu-threads, "
                          "because can not read file \"" + filePath + "\"");
-        return -1;
+        return false;
     }
 
     // process file-content
-    const int32_t range = getRangeInfo(info);
-    if(range == -1)
+    uint64_t range = 0;
+    if(getRangeInfo(range, info) == false)
     {
         error.addMeesage("Failed to get number of cpu-threads, "
                          "because something seems to be broken in file \"" + filePath + "\"");
+        return false;
     }
 
-    return range;
+    result = range;
+    return true;
 }
 
 /**
@@ -220,7 +230,7 @@ isHyperthreadingEnabled(ErrorContainer &error)
  *
  * @param error reference for error-output
  *
- * @return
+ * @return true, if supported, else false
  */
 bool
 isHyperthreadingSupported(ErrorContainer &error)
@@ -242,7 +252,7 @@ isHyperthreadingSupported(ErrorContainer &error)
  * @param newState true to enable and false to disable hyperthreading
  * @param error reference for error-output
  *
- * @return true, if hyperthreading is suppored and changes successfull, else false
+ * @return true, if hyperthreading is suppored and changes successful, else false
  */
 bool
 changeHyperthreadingState(const bool newState, ErrorContainer &error)
@@ -299,13 +309,14 @@ changeHyperthreadingState(const bool newState, ErrorContainer &error)
 /**
  * @brief check to which cpu-socket a specific thread belongs to
  *
+ * @param result reference for result-output
  * @param threadId id of the thread to check
  * @param error reference for error-output
  *
- * @return -1 if target-file not found or broken, else id of cpu-socket
+ * @return true, if successful, else false
  */
-int32_t
-getCpuPackageId(const int32_t threadId, ErrorContainer &error)
+bool
+getCpuPackageId(uint64_t &result, const uint64_t threadId, ErrorContainer &error)
 {
     // build request-path
     const std::string filePath = "/sys/devices/system/cpu/cpu"
@@ -318,22 +329,24 @@ getCpuPackageId(const int32_t threadId, ErrorContainer &error)
     {
         error.addMeesage("Failed to get package-id of the cpu-thread with id: \""
                          + std::to_string(threadId) + "\"");
-        return -1;
+        return false;
     }
 
-    return std::stoi(info);
+    result = std::stoi(info);
+    return true;
 }
 
 /**
  * @brief get id of the physical core of a cpu-thread
  *
+ * @param result reference for result-output
  * @param threadId id of the thread to check
  * @param error reference for error-output
  *
- * @return -1 if target-file not found or broken, else id of cpu-core
+ * @return true, if successful, else false
  */
-int32_t
-getCpuCoreId(const int32_t threadId, ErrorContainer &error)
+bool
+getCpuCoreId(uint64_t &result, const uint64_t threadId, ErrorContainer &error)
 {
     // build request-path
     const std::string filePath = "/sys/devices/system/cpu/cpu"
@@ -346,23 +359,25 @@ getCpuCoreId(const int32_t threadId, ErrorContainer &error)
     {
         error.addMeesage("Failed to get core-id of the cpu-thread with id: \""
                          + std::to_string(threadId) + "\"");
-        return -1;
+        return false;
     }
 
-    return std::stoi(info);
+    result = std::stoi(info);
+    return true;
 }
 
 
 /**
  * @brief get thread-id of a sibling to another thread-id in case of hyper-threading
  *
+ * @param result reference for result-output
  * @param threadId id of the thread create to request
  * @param error reference for error-output
  *
- * @return -1 if target-file not found or broken, else id of the thread-sibling
+ * @return true, if successful, else false
  */
-int32_t
-getCpuSiblingId(const int32_t threadId, ErrorContainer &error)
+bool
+getCpuSiblingId(uint64_t &result, const uint64_t threadId, ErrorContainer &error)
 {
     // if hyperthreading is not enabled, there are no siblings possible
     if(isHyperthreadingEnabled(error))
@@ -371,7 +386,7 @@ getCpuSiblingId(const int32_t threadId, ErrorContainer &error)
                          + std::to_string(threadId)
                          + "\", because hyperthreading is not enabled or supported");
         error.addSolution("Endable hyperthrading, if supported by the system");
-        return -1;
+        return false;
     }
 
     // build request-path
@@ -385,7 +400,7 @@ getCpuSiblingId(const int32_t threadId, ErrorContainer &error)
     {
         error.addMeesage("Failed to get sibling-id of the cpu-thread with id: \""
                          + std::to_string(threadId) + "\"");
-        return -1;
+        return false;
     }
 
     // process content
@@ -397,29 +412,32 @@ getCpuSiblingId(const int32_t threadId, ErrorContainer &error)
                              + std::to_string(threadId) + "\"");
         error.addSolution("check if file \"" + filePath + "\" has contains a comma-separated"
                           " list of thread-ids");
-        return -1;
+        return false;
     }
 
     // filter correct result from the output
-    const int32_t second = std::stoi(siblings.at(1));
+    const uint64_t second = std::stoi(siblings.at(1));
     if(second == threadId) {
         return std::stoi(siblings.at(0));
     }
 
-    return second;
+    result = second;
+    return true;
 }
 
 /**
  * @brief get speed-value of a file of a thread
  *
+ * @param result reference for result-output
  * @param threadId id of the thread create to request
  * @param fileName name of the file in cpufreq-directory to read
  * @param error reference for error-output
  *
- * @return -1, if file not exist, else speed-value in Hz
+ * @return true, if successful, else false
  */
-int64_t
-getSpeed(const int32_t threadId,
+bool
+getSpeed(uint64_t &result,
+         const uint64_t threadId,
          const std::string &fileName,
          ErrorContainer &error)
 {
@@ -432,115 +450,131 @@ getSpeed(const int32_t threadId,
     // get info from requested file
     const std::string info = getInfo(filePath, error);
     if(info == "") {
-        return -1;
+        return false;
     }
 
-    return std::stol(info);
+    result = std::stol(info);
+    return true;
 }
 
 /**
  * @brief get current set minimum speed of a cpu-thread
  *
+ * @param result reference for result-output
  * @param threadId id of thread to check
  * @param error reference for error-output
  *
- * @return -1, if file not exist, else speed-value in Hz
+ * @return true, if successful, else false
  */
-int64_t
-getCurrentMinimumSpeed(const int32_t threadId, ErrorContainer &error)
+bool
+getCurrentMinimumSpeed(uint64_t &result, const uint64_t threadId, ErrorContainer &error)
 {
-    const int64_t speed = getSpeed(threadId, "scaling_min_freq", error);
-    if(speed == -1)
+    uint64_t speed = 0;
+    if(getSpeed(speed, threadId, "scaling_min_freq", error) == false)
     {
         error.addMeesage("Failed to the current minimum speed of thread with id: \""
                          + std::to_string(threadId) + "\"");
+        return false;
     }
 
-    return speed;
+    result = speed;
+    return true;
 }
 
 /**
  * @brief get current set maximum speed of a cpu-thread
  *
+ * @param result reference for result-output
  * @param threadId id of thread to check
  * @param error reference for error-output
  *
- * @return -1, if file not exist, else speed-value in Hz
+ * @return true, if successful, else false
  */
-int64_t
-getCurrentMaximumSpeed(const int32_t threadId, ErrorContainer &error)
+bool
+getCurrentMaximumSpeed(uint64_t &result, const uint64_t threadId, ErrorContainer &error)
 {
-    const int64_t speed = getSpeed(threadId, "scaling_max_freq", error);
-    if(speed == -1)
+    uint64_t speed = 0;
+    if(getSpeed(speed, threadId, "scaling_max_freq", error) == false)
     {
         error.addMeesage("Failed to the current maximum speed of thread with id: \""
                          + std::to_string(threadId) + "\"");
+        return false;
     }
 
-    return speed;
+    result = speed;
+    return true;
 }
 
 /**
  * @brief get current speed of a cpu-thread
  *
+ * @param result reference for result-output
  * @param threadId id of thread to check
  * @param error reference for error-output
  *
- * @return -1, if file not exist, else speed-value in Hz
+ * @return true, if successful, else false
  */
-int64_t
-getCurrentSpeed(const int32_t threadId, ErrorContainer &error)
+bool
+getCurrentSpeed(uint64_t &result, const uint64_t threadId, ErrorContainer &error)
 {
-    const int64_t speed = getSpeed(threadId, "scaling_cur_freq", error);
-    if(speed == -1)
+    uint64_t speed = 0;
+    if(getSpeed(speed, threadId, "scaling_cur_freq", error) == false)
     {
         error.addMeesage("Failed to the current speed of thread with id: \""
                          + std::to_string(threadId) + "\"");
+        return false;
     }
 
-    return speed;
+    result = speed;
+    return true;
 }
 
 /**
  * @brief get absolute minimum value of a thread
  *
+ * @param result reference for result-output
  * @param threadId id of thread to check
  * @param error reference for error-output
  *
- * @return -1, if file not exist, else speed-value in Hz
+ * @return true, if successful, else false
  */
-int64_t
-getMinimumSpeed(const int32_t threadId, ErrorContainer &error)
+bool
+getMinimumSpeed(uint64_t &result, const uint64_t threadId, ErrorContainer &error)
 {
-    const int64_t speed = getSpeed(threadId, "cpuinfo_min_freq", error);
-    if(speed == -1)
+    uint64_t speed = 0;
+    if(getSpeed(speed, threadId, "cpuinfo_min_freq", error) == false)
     {
         error.addMeesage("Failed to the minimum speed of thread with id: \""
                          + std::to_string(threadId) + "\"");
+        return false;
     }
 
-    return speed;
+    result = speed;
+    return true;
 }
 
 /**
  * @brief get absolute maxiumum value of a thread
  *
+ * @param result reference for result-output
  * @param threadId id of thread to check
  * @param error reference for error-output
  *
- * @return -1, if file not exist, else speed-value in Hz
+ * @return true, if successful, else false
  */
-int64_t
-getMaximumSpeed(const int32_t threadId, ErrorContainer &error)
+bool
+getMaximumSpeed(uint64_t &result, const uint64_t threadId, ErrorContainer &error)
 {
-    const int64_t speed = getSpeed(threadId, "cpuinfo_max_freq", error);
-    if(speed == -1)
+    uint64_t speed = 0;
+    if(getSpeed(speed, threadId, "cpuinfo_max_freq", error) == false)
     {
         error.addMeesage("Failed to the maximum speed of thread with id: \""
                          + std::to_string(threadId) + "\"");
+        return false;
     }
 
-    return speed;
+    result = speed;
+    return true;
 }
 
 /**
@@ -553,11 +587,11 @@ getMaximumSpeed(const int32_t threadId, ErrorContainer &error)
  * @return false, if no permission to update files, else true
  */
 bool
-setMinimumSpeed(const int32_t threadId, int64_t newSpeed, ErrorContainer &error)
+setMinimumSpeed(const uint64_t threadId, uint64_t newSpeed, ErrorContainer &error)
 {
     // fix lower border
-    const int64_t minSpeed = getMinimumSpeed(threadId, error);
-    if(minSpeed == -1) {
+    uint64_t minSpeed = 0;
+    if(getMinimumSpeed(minSpeed, threadId, error) == false) {
         return false;
     }
     if(newSpeed < minSpeed) {
@@ -565,8 +599,8 @@ setMinimumSpeed(const int32_t threadId, int64_t newSpeed, ErrorContainer &error)
     }
 
     // fix upper border
-    const int64_t maxSpeed = getMaximumSpeed(threadId, error);
-    if(maxSpeed == -1) {
+    uint64_t maxSpeed = 0;
+    if(getMaximumSpeed(maxSpeed, threadId, error) == false) {
         return false;
     }
     if(newSpeed > maxSpeed) {
@@ -594,11 +628,11 @@ setMinimumSpeed(const int32_t threadId, int64_t newSpeed, ErrorContainer &error)
  * @return false, if no permission to update files, else true
  */
 bool
-setMaximumSpeed(const int32_t threadId, int64_t newSpeed, ErrorContainer &error)
+setMaximumSpeed(const uint64_t threadId, uint64_t newSpeed, ErrorContainer &error)
 {
     // fix lower border
-    const int64_t minSpeed = getMinimumSpeed(threadId, error);
-    if(minSpeed == -1) {
+    uint64_t minSpeed = 0;
+    if(getMinimumSpeed(minSpeed, threadId, error) == false) {
         return false;
     }
     if(newSpeed < minSpeed) {
@@ -606,8 +640,8 @@ setMaximumSpeed(const int32_t threadId, int64_t newSpeed, ErrorContainer &error)
     }
 
     // fix upper border
-    const int64_t maxSpeed = getMaximumSpeed(threadId, error);
-    if(maxSpeed == -1) {
+    uint64_t maxSpeed = 0;;
+    if(getMaximumSpeed(maxSpeed, threadId, error) == false) {
         return false;
     }
     if(newSpeed > maxSpeed) {
@@ -634,11 +668,11 @@ setMaximumSpeed(const int32_t threadId, int64_t newSpeed, ErrorContainer &error)
  * @return false, if no permission to update files, else true
  */
 bool
-resetSpeed(const int32_t threadId, ErrorContainer &error)
+resetSpeed(const uint64_t threadId, ErrorContainer &error)
 {
     // reset max-speed
-    const int64_t maxSpeed = getMaximumSpeed(threadId, error);
-    if(maxSpeed == -1) {
+    uint64_t maxSpeed = 0;;
+    if(getMaximumSpeed(maxSpeed, threadId, error) == false) {
         return false;
     }
     if(setMaximumSpeed(threadId, maxSpeed, error) == false) {
@@ -646,8 +680,8 @@ resetSpeed(const int32_t threadId, ErrorContainer &error)
     }
 
     // reset min-speed
-    const int64_t minSpeed = getMinimumSpeed(threadId, error);
-    if(minSpeed == -1) {
+    uint64_t minSpeed = 0;
+    if(getMinimumSpeed(minSpeed, threadId, error) == false) {
         return false;
     }
     if(setMinimumSpeed(threadId, minSpeed, error) == false) {
