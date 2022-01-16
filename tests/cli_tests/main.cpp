@@ -32,18 +32,33 @@ int main()
 
     std::cout<<"=============================CPU============================="<<std::endl;
 
-    std::cout<<"threads: "<<getNumberOfCpuThreads(error)<<std::endl;
-    std::cout<<"sockets: "<<getNumberOfCpuPackages(error)<<std::endl;
-    std::cout<<"socket of thead 1: "<<getCpuPackageId(1, error)<<std::endl;
-    std::cout<<"sibling of thread 1: "<<getCpuSiblingId(1, error)<<std::endl;
+    uint64_t numberOfThreads = 0;
+    uint64_t numberOfSockets = 0;
+    uint64_t socketOfThread = 0;
+    uint64_t siblingId = 0;
+    getNumberOfCpuThreads(numberOfThreads, error);
+    getNumberOfCpuPackages(numberOfSockets, error);
+    getCpuPackageId(socketOfThread, 1, error);
+    getCpuSiblingId(siblingId, 1, error);
+    std::cout<<"threads: "<<numberOfThreads<<std::endl;
+    std::cout<<"sockets: "<<numberOfSockets<<std::endl;
+    std::cout<<"socket of thead 1: "<<socketOfThread<<std::endl;
+    std::cout<<"sibling of thread 1: "<<siblingId<<std::endl;
 
-    std::cout<<"min of thread 1: "<<getCurrentMinimumSpeed(1, error)<<std::endl;
-    std::cout<<"max of thread 1: "<<getCurrentMaximumSpeed(1, error)<<std::endl;
+    uint64_t minSpeed = 0;
+    uint64_t maxSpeed = 0;
+    uint64_t curSpeed = 0;
+    getCurrentMinimumSpeed(minSpeed, 1, error);
+    getCurrentMaximumSpeed(maxSpeed, 1, error);
+    getCurrentSpeed(curSpeed, 0, error);
+    std::cout<<"min of thread 1: "<<minSpeed<<std::endl;
+    std::cout<<"max of thread 1: "<<maxSpeed<<std::endl;
 
     for(int i = 0; i < 5; i++)
     {
         std::cout<<i<<" ------------------"<<std::endl;
-        std::cout<<"cur of thread 0: "<<getCurrentSpeed(0, error)<<std::endl;
+        getCurrentSpeed(curSpeed, 0, error);
+        std::cout<<"cur of thread 0: "<<curSpeed<<std::endl;
 
         sleep(1);
     }
@@ -55,7 +70,8 @@ int main()
     for(int i = 0; i < 15; i++)
     {
         std::cout<<i<<" ------------------"<<std::endl;
-        std::cout<<"cur of thread 0: "<<getCurrentSpeed(0, error)<<std::endl;
+        getCurrentSpeed(curSpeed, 0, error);
+        std::cout<<"cur of thread 0: "<<curSpeed<<std::endl;
         sleep(1);
     }
     std::cout<<"#######################################################################"<<std::endl;
@@ -68,9 +84,12 @@ int main()
     for(int i = 0; i < 15; i++)
     {
         std::cout<<i<<" ------------------"<<std::endl;
-        std::cout<<"cur of thread 0: "<<getCurrentSpeed(0, error)<<std::endl;
-        std::cout<<"min of thread 0: "<<getCurrentMinimumSpeed(0, error)<<std::endl;
-        std::cout<<"max of thread 0: "<<getCurrentMaximumSpeed(0, error)<<std::endl;
+        getCurrentMinimumSpeed(minSpeed, 0, error);
+        getCurrentMaximumSpeed(maxSpeed, 0, error);
+        getCurrentSpeed(curSpeed, 0, error);
+        std::cout<<"cur of thread 0: "<<curSpeed<<std::endl;
+        std::cout<<"min of thread 0: "<<minSpeed<<std::endl;
+        std::cout<<"max of thread 0: "<<maxSpeed<<std::endl;
 
         sleep(1);
     }
@@ -83,7 +102,8 @@ int main()
     for(int i = 0; i < 5; i++)
     {
         std::cout<<i<<" ------------------"<<std::endl;
-        std::cout<<"cur of thread 0: "<<getCurrentSpeed(0, error)<<std::endl;
+        getCurrentSpeed(curSpeed, 0, error);
+        std::cout<<"cur of thread 0: "<<curSpeed<<std::endl;
 
         sleep(1);
     }

@@ -83,7 +83,7 @@ struct RaplInfo
 class Rapl
 {
 public:
-    Rapl(const int32_t threadId);
+    Rapl(const uint64_t threadId);
     bool initRapl(ErrorContainer &error);
     bool isActive() const;
 
@@ -100,7 +100,7 @@ private:
         std::chrono::high_resolution_clock::time_point timeStamp;
     };
 
-    int32_t m_threadId = 0;
+    uint64_t m_threadId = 0;
     int m_fd;
     bool m_isInit = false;
 
