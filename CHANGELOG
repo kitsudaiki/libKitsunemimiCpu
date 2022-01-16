@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.0] - 2022-01-16
+
+### Changed
+- rework all functions for speed-values to use unsigned-int values instead of signed-int
+
+
 ## [0.2.0] - 2021-11-19
 
 ### Added
