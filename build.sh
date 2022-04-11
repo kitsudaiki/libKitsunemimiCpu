@@ -57,7 +57,7 @@ function get_required_private_repo_gitlab () {
     NUMBER_OF_THREADS=$5
 
     # clone repo
-    git clone http://kitsudaiki:$TOKEN@10.0.3.120/kitsudaiki/$REPO_NAME.git "$PARENT_DIR/$REPO_NAME"
+    git clone http://kitsudaiki:$TOKEN@10.0.3.120/hanami/$REPO_NAME.git "$PARENT_DIR/$REPO_NAME"
     cd "$PARENT_DIR/$REPO_NAME"
     git checkout $TAG_OR_BRANCH
 
