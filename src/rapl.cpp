@@ -101,7 +101,7 @@ Rapl::initRapl(ErrorContainer &error)
     uint64_t raw_value = readMSR(MSR_RAPL_POWER_UNIT);
     m_info.power_units = pow(0.5, (double) (raw_value & 0xf));
     m_info.energy_units = pow(0.5, (double) ((raw_value >> 8) & 0x1f));
-    m_info.time_units = pow(0.5,	(double) ((raw_value >> 16) & 0xf));
+    m_info.time_units = pow(0.5, (double) ((raw_value >> 16) & 0xf));
 
     // read MSR_PKG_POWER_INFO Register
     raw_value = readMSR(MSR_PKG_POWER_INFO);

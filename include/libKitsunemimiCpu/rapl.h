@@ -41,14 +41,14 @@ struct RaplDiff
     const std::string toString()
     {
         std::string content = "";
-        content += "pkgDiff: " + std::to_string(pkgDiff) + " Ws\n";
-        content += "pp0Diff: " + std::to_string(pp0Diff) + " Ws\n";
-        content += "pp1Diff: " + std::to_string(pp1Diff) + " Ws\n";
+        content += "pkgDiff:  " + std::to_string(pkgDiff)  + " Ws\n";
+        content += "pp0Diff:  " + std::to_string(pp0Diff)  + " Ws\n";
+        content += "pp1Diff:  " + std::to_string(pp1Diff)  + " Ws\n";
         content += "dramDiff: " + std::to_string(dramDiff) + " Ws\n";
         content +=  "---\n";
-        content += "pkgAvg: " + std::to_string(pkgAvg) + " W\n";
-        content += "pp0Avg: " + std::to_string(pp0Avg) + " W\n";
-        content += "pp1Avg: " + std::to_string(pp1Avg) + " W\n";
+        content += "pkgAvg:  " + std::to_string(pkgAvg)  + " W\n";
+        content += "pp0Avg:  " + std::to_string(pp0Avg)  + " W\n";
+        content += "pp1Avg:  " + std::to_string(pp1Avg)  + " W\n";
         content += "dramAvg: " + std::to_string(dramAvg) + " W\n";
         return content;
     }
@@ -68,14 +68,10 @@ struct RaplInfo
     const std::string toString()
     {
         std::string content = "";
-        content += "Power units: " + std::to_string(power_units) + " W\n";
-        content += "Energy units: " + std::to_string(energy_units) + " J\n";
-        content += "Time units: " + std::to_string(time_units) + " s\n";
-        content +=  "---\n";
-        content += "Package thermal spec: " + std::to_string(thermal_spec_power) + " W\n";
-        content += "Package minimum power: " + std::to_string(minimum_power) + " W\n";
-        content += "Package maximum power: " + std::to_string(maximum_power) + " W\n";
-        content += "Package maximum time window: " + std::to_string(time_window) + " s\n";
+        content += "Power units:                   " + std::to_string(power_units)        + " W\n";
+        content += "Energy units:                  " + std::to_string(energy_units)       + " J\n";
+        content += "Time units:                    " + std::to_string(time_units)         + " s\n";
+        content += "Package thermal specification: " + std::to_string(thermal_spec_power) + " W\n";
         return content;
     }
 };
