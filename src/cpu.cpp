@@ -9,6 +9,7 @@
 #include <libKitsunemimiCpu/cpu.h>
 
 #include <libKitsunemimiCommon/common_methods/string_methods.h>
+#include <libKitsunemimiCommon/common_methods/file_methods.h>
 
 namespace Kitsunemimi
 {
@@ -732,6 +733,84 @@ resetSpeed(const uint64_t threadId,
     }
 
     return true;
+}
+
+/**
+ * @brief get file-ids, which contains temperature-ids of the cpu
+ *
+ * @param ids reference for the resulting ids
+ * @param error reference for error-output
+ *
+ * @return false if no ids were found, else true
+ */
+bool
+getPkgTemperatureIds(std::vector<uint64_t> &ids,
+                     ErrorContainer &error)
+{
+    uint64_t counter = 0;
+    const std::string basePath = "/sys/class/thermal/thermal_zone";
+
+    while(true)
+    {
+        const std::string filePath = basePath + std::to_string(counter) + "/type";
+
+        // break-rule to avoid endless-loop
+        if(std::filesystem::exists(filePath) == false)
+        {
+            if(ids.size() == 0)
+            {
+                error.addMeesage("No files found with relevant temperature-information "
+                                 "about the cpu");
+                return false;
+            }
+
+            return true;
+        }
+
+        // get type-information behind the id
+        const std::string content = getInfo(filePath, error);
+        if(content == "") {
+            return false;
+        }
+
+        // check if the id belongs to the temperature of the cpu-package
+        // TODO: check if this also is correct in Multi-CPU Server
+        if(content == "x86_pkg_temp") {
+            ids.push_back(counter);
+        }
+
+        counter++;
+    }
+
+    return true;
+}
+
+/**
+ * @brief get temperature of a cpu
+ *
+ * @param pkgFileId one of the ids, which where selected by the function getPkgTemperatureIds
+ * @param error reference for error-output
+ *
+ * @return 0.0 if no temperature was found for the id,
+ *             else the temperature behind the id in celsius
+ */
+double
+getPkgTemperature(const uint64_t pkgFileId,
+                  ErrorContainer &error)
+{
+    const std::string filePath = "/sys/class/thermal/thermal_zone"
+                                 + std::to_string(pkgFileId)
+                                 + "/temp";
+
+    // get type-information behind the id
+    const std::string content = getInfo(filePath, error);
+    if(content == "") {
+        return 0.0;
+    }
+
+    // convert content into value
+    const long temp = strtol(content.c_str(), NULL, 10);
+    return (double)temp / 1000.0;
 }
 
 } // namespace Cpu

@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <string>
 #include <fstream>
+#include <stdlib.h>
 
 #include <libKitsunemimiCommon/logger.h>
 
@@ -43,6 +44,10 @@ bool getCurrentMaximumSpeed(uint64_t &result, const uint64_t threadId, ErrorCont
 bool setMinimumSpeed(const uint64_t threadId, uint64_t newSpeed, ErrorContainer &error);
 bool setMaximumSpeed(const uint64_t threadId, uint64_t newSpeed, ErrorContainer &error);
 bool resetSpeed(const uint64_t threadId, ErrorContainer &error);
+
+// temperature
+bool getPkgTemperatureIds(std::vector<uint64_t> &ids, ErrorContainer &error);
+double getPkgTemperature(const uint64_t pkgFileId, ErrorContainer &error);
 
 } // namespace Cpu
 } // namespace Kitsunemimi
