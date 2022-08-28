@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <cmath>
 #include <chrono>
+#include <fcntl.h>
 #include <libKitsunemimiCommon/logger.h>
 
 #ifndef KITSUNEMIMI_CPU_RAPL_H
