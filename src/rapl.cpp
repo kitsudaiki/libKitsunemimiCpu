@@ -226,17 +226,20 @@ Rapl::calculateDiff()
     diff.pp1Diff = m_info.energy_units * static_cast<double>(state.pp1 - m_lastState.pp1);
     diff.dramDiff = m_info.energy_units * static_cast<double>(state.dram - m_lastState.dram);
 
-    // calculate time-difference to last run and convert it into seconds
-    uint64_t nanoSec = std::chrono::duration_cast<chronoNanoSec>(state.timeStamp -
-                                                                 m_lastState.timeStamp).count();
-    const double nanoSecPerSec = 1000000000.0;
-    diff.time = static_cast<double>(nanoSec) / nanoSecPerSec;
+    if(m_lastState.pkg > 0.0f)
+    {
+        // calculate time-difference to last run and convert it into seconds
+        uint64_t nanoSec = std::chrono::duration_cast<chronoNanoSec>(state.timeStamp -
+                                                                     m_lastState.timeStamp).count();
+        const double nanoSecPerSec = 1000000000.0;
+        diff.time = static_cast<double>(nanoSec) / nanoSecPerSec;
 
-    // calculate average power-consumption per second
-    diff.pkgAvg = static_cast<double>(diff.pkgDiff) / diff.time;
-    diff.pp0Avg = static_cast<double>(diff.pp0Diff) / diff.time;
-    diff.pp1Avg = static_cast<double>(diff.pp1Diff) / diff.time;
-    diff.dramAvg = static_cast<double>(diff.dramDiff) / diff.time;
+        // calculate average power-consumption per second
+        diff.pkgAvg = static_cast<double>(diff.pkgDiff) / diff.time;
+        diff.pp0Avg = static_cast<double>(diff.pp0Diff) / diff.time;
+        diff.pp1Avg = static_cast<double>(diff.pp1Diff) / diff.time;
+        diff.dramAvg = static_cast<double>(diff.dramDiff) / diff.time;
+    }
 
     // update internal state
     m_lastState = state;

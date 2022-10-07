@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.0] - 2022-10-07
+
+### Add 
+- read temperature of the CPU
+
+
 ## [0.3.0] - 2022-01-16
 
 ### Changed
