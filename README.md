@@ -100,6 +100,7 @@ sleep(10);
 diff = rapl.calculateDiff();
 std::cout<<diff.toString()<<std::endl;
 // output contains power-consumption per second and total power-consumption within the 10 seconds
+```
 
 ## Contributing
 
