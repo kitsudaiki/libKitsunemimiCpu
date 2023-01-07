@@ -10,8 +10,6 @@
 
 namespace Kitsunemimi
 {
-namespace Cpu
-{
 
 /**
  * @brief get total amount of main-memory of the system in bytes
@@ -44,5 +42,4 @@ getPageSize()
     return sysconf(_SC_PAGE_SIZE);
 }
 
-} // namespace Cpu
 } // namespace Kitsunemimi
