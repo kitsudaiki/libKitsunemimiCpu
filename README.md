@@ -86,7 +86,7 @@ The functions of the header https://github.com/kitsudaiki/libKitsunemimiCpu/blob
 #include <libKitsunemimiCommon/logger.h>
 #include <libKitsunemimiCommon/threading/thread.h>
 
-Kitsunemimi::Cpu::Rapl rapl(0);
+Kitsunemimi::Rapl rapl(0);
 rapl.initRapl(error);
 std::cout<<"info: "<<rapl.getInfo().toString()<<std::endl;
 
