@@ -7,7 +7,7 @@
 #include <libKitsunemimiCommon/logger.h>
 #include <libKitsunemimiCommon/threading/thread.h>
 
-using namespace Kitsunemimi::Cpu;
+using namespace Kitsunemimi;
 
 int main()
 {

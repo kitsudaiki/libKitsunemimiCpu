@@ -17,8 +17,6 @@ typedef std::chrono::high_resolution_clock chronoClock;
 
 namespace Kitsunemimi
 {
-namespace Cpu
-{
 
 #define MSR_RAPL_POWER_UNIT            0x606
 
@@ -255,5 +253,4 @@ Rapl::getInfo() const
     return m_info;
 }
 
-} // namespace Cpu
 } // namespace Kitsunemimi

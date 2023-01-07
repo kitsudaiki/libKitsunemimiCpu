@@ -1,6 +1,6 @@
 # libKitsunemimiCpu
 
-![Github workfloat status](https://img.shields.io/github/workflow/status/kitsudaiki/libKitsunemimiCpu/build-and-test/develop?label=build%20and%20test&style=flat-square)
+![Github workfloat status](https://img.shields.io/github/actions/workflow/status/kitsudaiki/libKitsunemimiCpu/build_test.yml?branch=develop&style=flat-square&label=build%20and%20test)
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/kitsudaiki/libKitsunemimiCpu?label=version&style=flat-square)
 ![GitHub](https://img.shields.io/github/license/kitsudaiki/libKitsunemimiCpu?style=flat-square)
 ![C++Version](https://img.shields.io/badge/c%2B%2B-17-blue?style=flat-square)
@@ -86,7 +86,7 @@ The functions of the header https://github.com/kitsudaiki/libKitsunemimiCpu/blob
 #include <libKitsunemimiCommon/logger.h>
 #include <libKitsunemimiCommon/threading/thread.h>
 
-Kitsunemimi::Cpu::Rapl rapl(0);
+Kitsunemimi::Rapl rapl(0);
 rapl.initRapl(error);
 std::cout<<"info: "<<rapl.getInfo().toString()<<std::endl;
 
