@@ -1,5 +1,8 @@
 # libKitsunemimiCpu
 
+## IMPORTANT: This repository is no longer maintained, because in context of issue https://github.com/kitsudaiki/Hanami-AI/issues/31 the content was moved to the main-repository (https://github.com/kitsudaiki/Hanami-AI) in order to reduce the maintenance workload.
+
+
 ![Github workfloat status](https://img.shields.io/github/actions/workflow/status/kitsudaiki/libKitsunemimiCpu/build_test.yml?branch=develop&style=flat-square&label=build%20and%20test)
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/kitsudaiki/libKitsunemimiCpu?label=version&style=flat-square)
 ![GitHub](https://img.shields.io/github/license/kitsudaiki/libKitsunemimiCpu?style=flat-square)
